@@ -11,7 +11,17 @@ function App() {
       name: newName,
       id: persons.length + 1,
     };
-    setPeople(persons.concat(personObject));
+
+    if (
+      persons.some(
+        (person) =>
+          person.name.toLowerCase() === personObject.name.toLowerCase()
+      )
+    ) {
+      alert(`${personObject.name} already exists in the phonebook.`);
+    } else {
+      setPeople(persons.concat(personObject));
+    }
     setNewName("");
   };
 

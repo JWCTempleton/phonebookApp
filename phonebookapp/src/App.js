@@ -1,6 +1,6 @@
 import "./App.css";
 import { useState } from "react";
-import Person from "./components/Person";
+import AllPeople from "./components/AllPeople";
 import PersonForm from "./components/PersonForm";
 import PersonSearch from "./components/PersonSearch";
 
@@ -68,9 +68,8 @@ function App() {
 
       <PersonSearch searchedName={searchedName} handleSearch={handleSearch} />
       <h2>People</h2>
-      {filteredNames.map((person) => (
-        <Person key={person.id} person={person} />
-      ))}
+
+      <AllPeople filteredNames={filteredNames} />
     </div>
   );
 }

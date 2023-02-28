@@ -51,6 +51,13 @@ function App() {
     setSearchedName(event.target.value);
   };
 
+  const handleDelete = (id) => {
+    const entry = persons.find((person) => person.id === id);
+    if (window.confirm(`Do you want to delete the entry for ${entry.name}?`)) {
+      console.log(`${entry.name} has been deleted.`);
+    }
+  };
+
   const filteredNames = persons.filter((person) =>
     person.name.toLowerCase().includes(searchedName.toLowerCase())
   );
@@ -71,7 +78,7 @@ function App() {
       <PersonSearch searchedName={searchedName} handleSearch={handleSearch} />
       <h2>People</h2>
 
-      <AllPeople filteredNames={filteredNames} />
+      <AllPeople filteredNames={filteredNames} handleDelete={handleDelete} />
     </div>
   );
 }

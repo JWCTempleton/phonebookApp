@@ -25,13 +25,27 @@ function App() {
       id: persons.length + 1,
     };
 
-    if (
-      persons.some(
-        (person) =>
-          person.name.toLowerCase() === personObject.name.toLowerCase()
-      )
-    ) {
-      alert(`${personObject.name} already exists in the phonebook.`);
+    const alreadyAdded = persons.filter(
+      (person) => person.name.toLowerCase() === personObject.name.toLowerCase()
+    );
+
+    console.log("already added", alreadyAdded[0].id);
+
+    if (alreadyAdded) {
+      if (
+        window.confirm(
+          `${personObject.name} is already in the phonebook. Replace the old number with new one?`
+        )
+      ) {
+        personService
+          .update(alreadyAdded[0].id, personObject)
+          .then((response) => {
+            const filteredPeople = persons.filter(
+              (person) => person.id !== alreadyAdded[0].id
+            );
+            setPeople([response, ...filteredPeople]);
+          });
+      }
     } else {
       personService.create(personObject).then((response) => {
         setPeople(persons.concat(personObject));

@@ -4,12 +4,14 @@ import AllPeople from "./components/AllPeople";
 import PersonForm from "./components/PersonForm";
 import PersonSearch from "./components/PersonSearch";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 
 function App() {
   const [persons, setPeople] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchedName, setSearchedName] = useState("");
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((response) => {
@@ -22,16 +24,15 @@ function App() {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
     };
 
     const alreadyAdded = persons.filter(
       (person) => person.name.toLowerCase() === personObject.name.toLowerCase()
     );
 
-    console.log("already added", alreadyAdded[0].id);
+    console.log("already added", alreadyAdded);
 
-    if (alreadyAdded) {
+    if (alreadyAdded.length > 0) {
       if (
         window.confirm(
           `${personObject.name} is already in the phonebook. Replace the old number with new one?`
@@ -44,12 +45,33 @@ function App() {
               (person) => person.id !== alreadyAdded[0].id
             );
             setPeople([response, ...filteredPeople]);
+          })
+          .catch((error) => {
+            setMessage({
+              type: "error",
+              message: `Person was already removed from server`,
+            });
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000);
+            setPeople(
+              persons.filter((person) => person.id !== alreadyAdded[0].id)
+            );
           });
+      } else {
+        return;
       }
     } else {
       personService.create(personObject).then((response) => {
-        setPeople(persons.concat(personObject));
+        setPeople(persons.concat(response));
       });
+      setMessage({
+        type: "success",
+        message: `${personObject.name} successfully added.`,
+      });
+      setTimeout(() => {
+        setMessage(null);
+      }, 3500);
     }
     setNewName("");
     setNewNumber("");
@@ -81,6 +103,7 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <h2>Add New Person</h2>
 
       <PersonForm

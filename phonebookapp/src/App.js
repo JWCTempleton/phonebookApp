@@ -62,16 +62,28 @@ function App() {
         return;
       }
     } else {
-      personService.create(personObject).then((response) => {
-        setPeople(persons.concat(response));
-      });
-      setMessage({
-        type: "success",
-        message: `${personObject.name} successfully added.`,
-      });
-      setTimeout(() => {
-        setMessage(null);
-      }, 3500);
+      personService
+        .create(personObject)
+        .then((response) => {
+          setPeople(persons.concat(response));
+          setMessage({
+            type: "success",
+            message: `${personObject.name} successfully added.`,
+          });
+          setTimeout(() => {
+            setMessage(null);
+          }, 3500);
+        })
+        .catch((error) => {
+          console.log(error.response.data.error);
+          setMessage({
+            type: "error",
+            message: `${error.response.data.error}`,
+          });
+          setTimeout(() => {
+            setMessage(null);
+          }, 3500);
+        });
     }
     setNewName("");
     setNewNumber("");
